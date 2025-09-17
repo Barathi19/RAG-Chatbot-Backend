@@ -16,7 +16,7 @@ const postMessage = asyncHandler(async (req, res) => {
     throw new ErrorResponse("Invalid sessionId", 400);
   }
 
-  await client.rPush(
+  await client.rpush(
     `chat:${sessionId}`,
     JSON.stringify({ role: "user", text: message })
   );
@@ -29,7 +29,7 @@ const postMessage = asyncHandler(async (req, res) => {
 
   const botReply = await getGeminiAnswer(message, contextText, sources);
 
-  await client.rPush(
+  await client.rpush(
     `chat:${sessionId}`,
     JSON.stringify({ role: "bot", text: botReply })
   );

@@ -23,7 +23,7 @@ const getHistory = asyncHandler(async (req, res) => {
     throw new ErrorResponse("Session not found", 404);
   }
 
-  const history = await client.lRange(`chat:${sessionId}`, 0, -1);
+  const history = await client.lrange(`chat:${sessionId}`, 0, -1);
   const parsed = history.map((msg) => JSON.parse(msg));
 
   sendResponse(parsed, 200, res);
