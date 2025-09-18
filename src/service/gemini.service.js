@@ -19,7 +19,7 @@ async function safeGeminiCall(prompt, retries = 3, delay = 2000) {
   }
 }
 
-export const getGeminiAnswer = async (question, context, sources) => {
+export const getGeminiAnswer = async (question, context) => {
   const prompt = `
 You are a helpful assistant. Use the following context to answer the user's question.
 If relevant, also provide the source links.
@@ -29,12 +29,9 @@ Question: ${question}
 Context:
 ${context}
 
-Sources:
-${sources.join("\n")}
-
 Answer:
 `;
 
   const reply = await safeGeminiCall(prompt);
-  return { reply, sources };
+  return reply;
 };

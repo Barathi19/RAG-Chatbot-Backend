@@ -5,6 +5,9 @@ import ErrorResponse from "../utils/errorResponse.js";
 import { getRelevantChunks } from "../service/pinecone.service.js";
 import { getGeminiAnswer } from "../service/gemini.service.js";
 
+const overloadTxt =
+  "⚠️ The assistant is currently overloaded. Please try again in a moment.";
+
 const postMessage = asyncHandler(async (req, res) => {
   const { sessionId, message } = req.body;
 
@@ -28,7 +31,7 @@ const postMessage = asyncHandler(async (req, res) => {
   const sources = results.map((r) => r.metadata.link);
 
   try {
-    const botReply = await getGeminiAnswer(message, contextText, sources);
+    const botReply = await getGeminiAnswer(message, contextText);
     await client.rpush(
       `chat:${sessionId}`,
       JSON.stringify({ role: "bot", text: botReply, sources })
@@ -36,9 +39,12 @@ const postMessage = asyncHandler(async (req, res) => {
 
     res.status(200).json({ reply: botReply, sources });
   } catch (error) {
+    await client.rpush(
+      `chat:${sessionId}`,
+      JSON.stringify({ role: "bot", text: overloadTxt })
+    );
     return res.json({
-      reply:
-        "⚠️ The assistant is currently overloaded. Please try again in a moment.",
+      reply: overloadTxt,
     });
   }
 });
