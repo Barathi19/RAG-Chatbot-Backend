@@ -30,7 +30,7 @@ It uses **Redis** for session management, **Pinecone** for vector search, and **
 
 ```bash
 # Clone repo
-git clone <your-repo-url>
+git clone https://github.com/Barathi19/RAG-Chatbot-Backend.git
 cd backend
 
 # Install dependencies
@@ -46,7 +46,7 @@ cp .env.example .env
 PORT=5000
 REDIS_URL=redis://localhost:6379   # or Upstash Redis URL
 PINECONE_API_KEY=your-pinecone-api-key
-PINECONE_INDEX=your-index-name
+JINA_API_KEY=your-api-key
 GEMINI_API_KEY=your-gemini-api-key
 ```
 ---
