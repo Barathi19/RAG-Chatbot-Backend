@@ -27,14 +27,20 @@ const postMessage = asyncHandler(async (req, res) => {
 
   const sources = results.map((r) => r.metadata.link);
 
-  const botReply = await getGeminiAnswer(message, contextText, sources);
+  try {
+    const botReply = await getGeminiAnswer(message, contextText, sources);
+    await client.rpush(
+      `chat:${sessionId}`,
+      JSON.stringify({ role: "bot", text: botReply, sources })
+    );
 
-  await client.rpush(
-    `chat:${sessionId}`,
-    JSON.stringify({ role: "bot", text: botReply })
-  );
-
-  res.status(200).json({ reply: botReply, sources });
+    res.status(200).json({ reply: botReply, sources });
+  } catch (error) {
+    return res.json({
+      reply:
+        "⚠️ The assistant is currently overloaded. Please try again in a moment.",
+    });
+  }
 });
 
 export default { postMessage };
