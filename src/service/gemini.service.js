@@ -19,14 +19,23 @@ async function safeGeminiCall(prompt, retries = 3, delay = 2000) {
   }
 }
 
-export const getGeminiAnswer = async (question, context) => {
+export const getGeminiAnswer = async (
+  question,
+  context,
+  sources,
+  historyText
+) => {
   const prompt = `
 You are a helpful assistant. Use the following context to answer the user's question.
-If relevant, also provide the source links.
+Include relevant sources if available.
 
-Question: ${question}
+Previous conversation:
+${historyText}
 
-Context:
+New question:
+${question}
+
+context:
 ${context}
 
 Answer:

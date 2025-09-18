@@ -30,8 +30,16 @@ const postMessage = asyncHandler(async (req, res) => {
 
   const sources = results.map((r) => r.metadata.link);
 
+  const rawHistory = await client.lrange(`chat:${sessionId}`, 0, -1);
+  const historyText = rawHistory
+    .map((item) => {
+      const obj = JSON.parse(item);
+      return `${obj.role === "user" ? "User" : "Bot"}: ${obj.text}`;
+    })
+    .join("\n");
+
   try {
-    const botReply = await getGeminiAnswer(message, contextText);
+    const botReply = await getGeminiAnswer(message, contextText, historyText);
     await client.rpush(
       `chat:${sessionId}`,
       JSON.stringify({ role: "bot", text: botReply, sources })
